@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from db import db
-from models import HomeWork, User
+from models import HomeWork, User, HWPatch
 from datetime import date
 
 
@@ -31,14 +31,25 @@ async def add_homework(token: str):
     
     return {'status': 'ok'}
 
-@router.post('/update')
-async def update_homework(token: str, date: str, count: int):
-    user = User(**await db.get_collection('urban_collection').find_one({'token': token}))
-    if not user:
-        raise HTTPException(404, 'User not found')
+@router.patch('/patch')
+async def update_homework(patch: HWPatch):
+    filter_query = {
+        'token': patch.token,
+        'homeworks.date': patch.date
+    }
+
+    update_query = {
+        '$set':
+        {
+            'homeworks.$.count': patch.count
+        }
+    }
+
+    result = await db.get_collection('urban_collection').update_one(filter_query, update_query)
+
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail='User or homework with specified data not found')
+    if result.modified_count == 0:
+        raise HTTPException(status_code=500, detail='Failed to update homework')
     
-    homework = next((hw for hw in user.homeworks if hw.date == date), None)
-    if homework:
-        pass
-    
-    
+    return {"status": "ok", "message": "Homework updated successfully"}

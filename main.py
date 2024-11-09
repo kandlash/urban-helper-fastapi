@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import HTTPException
 
 from db import db
-from routers import homeworks, users
+from routers import homeworks, users, templates
 
 from models import User, HomeWork
 from datetime import date
@@ -14,6 +14,7 @@ from datetime import date
 app = FastAPI()
 app.include_router(users.router, prefix='/user', tags=["user"])
 app.include_router(homeworks.router, prefix='/homework', tags=['homeworks'])
+app.include_router(templates.router, prefix='/templates', tags=['templates'])
 
 app.add_middleware(
     CORSMiddleware,
@@ -22,3 +23,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get('/')
+async def root():
+    return {'message': 'Welcome to UrbanHelperAPI'}
