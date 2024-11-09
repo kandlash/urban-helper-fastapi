@@ -17,9 +17,7 @@ async def get_user(t_id: int):
 async def create_user(user: User):
     user_ex = await db.get_collection('urban_collection').find_one({'telegram_id': user.telegram_id})
     if user_ex:
-        print('Est takoq poluchaeca')
-        return {'status': 'exists', 'message': 'User already exists'}
-    print('Net takogo poluchaeca')
+        raise HTTPException(status_code=500, detail='User already exists')
     await db.get_collection('urban_collection').insert_one(user.model_dump())
     return {'status': 'ok'}
 
