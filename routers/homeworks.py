@@ -31,6 +31,21 @@ async def add_homework(token: str):
     
     return {'status': 'ok'}
 
+@router.get('/get')
+async def get_homework(token: str):
+    filter_query = {
+        'token': token,
+        'homeworks.date': date.today().isoformat()
+    }
+
+    result = await db.get_collection('urban_collection').find_one(filter_query)
+    if not result:
+        raise HTTPException(status_code=404, detail='User or homework not found')
+    
+    homework_list = result.get('homeworks', [])
+    today_homework = [hw for hw in homework_list if hw['date'] == date.today().isoformat()]
+    return today_homework[0]
+
 @router.patch('/patch')
 async def update_homework(patch: HWPatch):
     filter_query = {
