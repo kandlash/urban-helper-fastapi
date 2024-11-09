@@ -1,0 +1,92 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+*.pyc
+*.pyo
+*.pyd
+*.log
+*.sqlite3
+*.db
+
+# Виртуальное окружение
+venv/
+.venv/
+env/
+.env/
+ENV/
+.Python
+
+# Конфигурации окружения
+.env
+.env.*
+
+# Папка с кэшем pip
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Cython
+*.c
+*.so
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# PyCharm
+.idea/
+*.iml
+
+# Системные файлы
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Docker
+docker-compose.yml
+.dockerignore
+Dockerfile
+docker-compose.override.yml
+
+# Миграции Alembic (если используете)
+migrations/versions/*.pyc
+migrations/versions/*.pyc
+migrations/versions/__pycache__/
+
+# Файлы сессий и кэша
+*.session
+.cache/
+
+# MyPy
+.mypy_cache/
+
+# Pytest
+.pytest_cache/
+.cache/
+.tox/
+
+# Тестовые артефакты
+coverage.xml
+*.cover
+*.py,cover
+.coverage
+coverage/
+htmlcov/
+
+# Результаты линтеров
+pylint-report.txt
+pylint-results.log
+flake8.log
+
+# Logs
+*.log
+logs/
+
+# Тестовые файлы
+*.test.db
