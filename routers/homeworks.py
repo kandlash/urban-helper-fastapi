@@ -7,44 +7,47 @@ from datetime import date
 router = APIRouter()
 
 @router.post('/add')
-async def add_homework(token: str):
-
+async def add_homework(token: str, date_str: str):
     user = await db.get_collection('urban_collection').find_one({'token': token})
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
     homeworks = user.get('homeworks', [])
-    current_date = date.today().isoformat()
 
-    homework_today = next((hw for hw in homeworks if hw['date'] == current_date), None)
+    homework_for_date = next((hw for hw in homeworks if hw['date'] == date_str), None)
 
-    if homework_today:
-        homework_today['count'] += 1
+    if homework_for_date:
+        homework_for_date['count'] += 1
     else:
-        new_homework = HomeWork(date=current_date, count=1).model_dump()
+        new_homework = HomeWork(date=date_str, count=1).model_dump()
         homeworks.append(new_homework)
 
     await db.get_collection('urban_collection').update_one(
         {'token': token},
         {'$set': {'homeworks': homeworks}}
     )
-    
+
     return {'status': 'ok'}
 
 @router.get('/get')
-async def get_homework(token: str):
+async def get_homework(token: str, date_str: str):
+
     filter_query = {
         'token': token,
-        'homeworks.date': date.today().isoformat()
+        'homeworks.date': date_str
     }
 
     result = await db.get_collection('urban_collection').find_one(filter_query)
     if not result:
         raise HTTPException(status_code=404, detail='User or homework not found')
-    
+
     homework_list = result.get('homeworks', [])
-    today_homework = [hw for hw in homework_list if hw['date'] == date.today().isoformat()]
-    return today_homework[0]
+    date_homework = next((hw for hw in homework_list if hw['date'] == date_str), None)
+
+    if not date_homework:
+        raise HTTPException(status_code=404, detail='Homework for specified date not found')
+
+    return date_homework
 
 @router.patch('/patch')
 async def update_homework(patch: HWPatch):
